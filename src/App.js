@@ -7,38 +7,52 @@ function App() {
   const dispatch = useDispatch();
   const users = useSelector((state)=>state.users)
   const final_users = useSelector((state)=>state.final_users);
-  let url = 'http://api.gazprom-intranet.alpha.trinitydigital.ru/api/news';
+  let url = 'https://api.guildwars2.com/v2/account/bank?access_token=5BEB65D2-A037-804C-BFD6-E8318E466C4141F5FFC8-2127-4B29-957C-62A4E09727AF';
   
   useEffect(()=>{
-    fetch('http://api.gazprom-intranet.alpha.trinitydigital.ru/api/news')
+    fetch(url)
     .then((res)=>res.json())
     .then((result)=>{
-      if(result.data && result.data.length>0){
-        dispatch({type:"GET_ALL_USERS", value:result.data});
-      } else {
-        //  ОШИБКА И ТД
-      }
+      console.log(result)
+      dispatch({type:"GET_ALL_USERS", value:result});
+ 
+       
     });
   },[]);
   
   useEffect(()=>{
    if(users.length>0){
-      users.forEach((user)=>{
-          fetch(`${url}?id=${user.id}`)
-          .then((res)=>res.json())
-          .then((result)=>{
-              let {data} = result;
-               dispatch({
-                  type:"GET_BY_ID",
-                  value:{
-                      id: Math.random()*100,
-                      name:data[0].category.name
-                  }
-              })
-              //  finalUsersRef.current = finalUsersRef.current.concat([{
-              //     name: data[0].category.name
-              // }]); 
-          });
+      users.forEach((user,i)=>{
+        if(user && user.id){
+  fetch(`https://api.guildwars2.com/v2/items/${user.id}`)
+  .then((res)=>res.json())
+  .then((data)=>{ 
+      
+       dispatch({
+        type:"GET_BY_ID",
+        value: {
+          id: Math.random()*100,
+          name:data.name
+        },
+
+      })
+  });
+
+  //           .then((res)=>res.json())
+//           .then((result)=>{
+//             // console.log(result)
+//             console.log(result)
+//             // debugger
+//               //   dispatch({
+//               //     type:"GET_BY_ID",
+//               //     value:{
+//               //         id: users[i].id,
+//               //         name:result.count
+//               //     }
+//               // })
+//            });
+      }
+        
       });
 
   }
